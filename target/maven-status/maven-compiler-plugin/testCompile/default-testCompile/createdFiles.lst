@@ -1,0 +1,9 @@
+com\desafioTecnico\Aceptacion\RestControllerAuthTestAcceptance.class
+com\desafioTecnico\service\PriceServiceTest.class
+com\desafioTecnico\PruebaTecnicaApplicationTests.class
+com\desafioTecnico\impl\NoteServiceImplTest.class
+com\desafioTecnico\controller\RestControllerAuthTest.class
+com\desafioTecnico\controller\NoteControllerTest.class
+com\desafioTecnico\implAcceptance\NoteServiceImplTestAcceptance.class
+com\desafioTecnico\controller\PriceControllerTest.class
+com\desafioTecnico\utils\JsonUtils.class
