@@ -1,5 +1,6 @@
 package com.desafioTecnico.dtos;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotBlank;
  * Se utiliza para transferir datos entre el cliente y el servidor.
  */
 @Data
+@AllArgsConstructor
 public class PhoneDto {
 
     @NotBlank(message = "El número es obligatorio")
