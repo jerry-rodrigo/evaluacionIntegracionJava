@@ -1,6 +1,6 @@
 -- Crear la tabla de usuarios
 CREATE TABLE IF NOT EXISTS users (
-    id UUID PRIMARY KEY DEFAULT RANDOM_UUID(),
+    id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS users (
     last_login TIMESTAMP,
     token VARCHAR(255),
     is_active BOOLEAN
-);
+    );
+
 
 -- Crear la tabla de teléfonos
 CREATE TABLE IF NOT EXISTS phones (
