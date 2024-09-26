@@ -1,6 +1,8 @@
 package com.desafioTecnico.dtos;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -12,12 +14,13 @@ import java.util.List;
  * Incluye la información del usuario y sus teléfonos.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRequestDto {
 
     @NotBlank(message = "El nombre es obligatorio")
     private String name;
 
-    @Email(message = "El correo no tiene un formato válido")
     @NotBlank(message = "El correo es obligatorio")
     private String email;
 

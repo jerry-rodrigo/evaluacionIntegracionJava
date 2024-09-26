@@ -1,197 +1,191 @@
-# Note Controller API
+# API RESTful de Gestión de Usuarios
 
-This API provides endpoints for managing Price.
+## Descripción
 
-## Endpoints
+Esta API permite la creación de usuarios y la gestión de sus datos. Los usuarios pueden ser registrados junto con un listado de teléfonos. El sistema valida el formato del correo y la contraseña mediante expresiones regulares. Además, genera un token JWT para cada usuario registrado, el cual es persistido junto con la información del usuario.
 
-### Obtener precio por parámetros
+## Características
 
-- **URL:** `/api/price/listar`
-- **Método:** GET
-- **Descripción:** Recupera el precio basado en los parámetros proporcionados.
-- **Autorización:** Requiere autenticación.
-- **Roles:** Todos los usuarios autenticados pueden acceder a este endpoint.
-- **Parámetros de solicitud:**
-    - `brandId`: Identificador de la marca.
-    - `productId`: Identificador del producto.
-    - `applicationDate`: Fecha de aplicación.
-- **Respuesta:** En caso de éxito, la respuesta contendrá el precio obtenido en el formato JSON. Si no se encuentra ningún precio, se devolverá una respuesta de error.
+- Registra un usuario con los campos `name`, `email`, `password` y una lista de phone.
+- Valida el correo electrónico con una expresión regular.
+- Valida la contraseña con una expresión regular configurada.
+- Genera un `token` JWT para cada usuario registrado.
+- Persistencia de datos en memoria con H2.
+- Control de errores mediante mensajes JSON.
 
-Ejemplo de respuesta exitosa:
+## Requisitos Previos
 
-```json
-{
-  "productId": 123,
-  "brandId": 456,
-  "priceList": 789,
-  "startDate": "2022-01-01T00:00:00Z",
-  "endDate": "2022-12-31T23:59:59Z",
-  "price": 99.99,
-  "currency": "USD"
-}
+Antes de ejecutar la aplicación, asegúrate de tener instalado:
+
+- **Java 11** o superior
+- **Maven 3.6.3** o superior
+- 
+## Tecnologías Utilizadas
+
+- **Spring Boot 2.7.8**
+- **JPA/Hibernate** para la persistencia de datos
+- **H2** como base de datos en memoria
+- **JWT (JSON Web Token)** para la generación de tokens de autenticación
+- **BCrypt** para el cifrado de contraseñas
+- **Lombok** para simplificar la escritura de código
+
+## Instalación y Configuración
+
+### Clonar el Repositorio
+
+```bash
+git clone https://github.com/jerry-rodrigo/evaluacionIntegracionJava
+
 ```
 
-## Authentication API
+## Construcción del Proyecto
+- Para construir el proyecto usando Maven, ejecuta el siguiente comando:
+mvn clean install
 
-This API provides endpoints for user authentication and registration.
+## Ejecución del Proyecto
+- Para ejecutar la aplicación, utiliza el siguiente comando:
+mvn spring-boot:run
 
-### Register User
+## La aplicación se ejecutará en:
+http://localhost:8080
 
-- **URL:** `/api/auth/register`
-- **Method:** POST
-- **Description:** Registers a user with the "user" role.
-- **Request Body:** The user registration data.
-- **Response:** Returns a success message if the registration is successful.
+## Accede a la consola de H2 para inspeccionar los datos:
+- URL de la consola: http://localhost:8080/h2-console
+- JDBC URL: jdbc:h2:mem:desafioTecnicoDb
+- Usuario: sa
+- Contraseña: sasa
 
-### Register Admin
+## API Endpoints
+1. Registro de Usuario
+ ## URL: /api/v1/users/register
+ ## Método: POST
+ ## Descripción: Registra un nuevo usuario con nombre, correo, contraseña y una lista de teléfonos.
+ ## Formato de solicitud:
 
-- **URL:** `/api/auth/registerAdm`
-- **Method:** POST
-- **Description:** Registers a user with the "admin" role.
-- **Authorization:** Requires authentication.
-- **Roles:** Only users with the "ADMIN" role can access this endpoint.
-- **Request Body:** The admin registration data.
-- **Response:** Returns a success message if the registration is successful.
-
-### Login
-
-- **URL:** `/api/auth/login`
-- **Method:** POST
-- **Description:** Authenticates a user and generates a JWT token.
-- **Request Body:** The user login credentials.
-- **Response:** Returns the JWT token if the authentication is successful.
-
-## Security Configuration
-
-This section provides information on the security configuration of the API.
-
-### Security Configuration Class
-
-- **Class:** `SecurityConfig`
-- **Description:** Configures the security settings for the API.
-- **Configuration:**
-    - Disables CSRF protection.
-    - Configures a custom authentication entry point for unauthorized access handling.
-    - Configures session management to be stateless.
-    - Defines authorization rules for different endpoints based on roles.
-    - Adds a JWT authentication filter to the filter chain.
-    - Allows access to Swagger UI and API documentation endpoints without authentication.
-
-### Password Encoding
-
-- **Class:** `PasswordEncoder`
-- **Description:** Configures the password encoder used for user authentication.
-
-### Authentication Manager
-
-- **Class:** `AuthenticationManager`
-- **Description:** Configures the authentication manager used for user authentication.
-
-## Dependencies
-
-This section lists the dependencies used in the API.
-
-- `spring-boot-starter-web`
-- `spring-boot-starter-security`
-- `spring-boot-starter-data-jpa`
-- `jjwt-api`
-- `jjwt-impl`
-- `jjwt-jackson`
-- `spring-boot-starter-validation`
-- `spring-boot-configuration-processor`
-- `spring-boot-starter-test` (for testing purposes)
-- `h2-database` (for testing purposes)
-
-Please refer to the project's `pom.xml` file for the specific versions of the dependencies used.
-
-## How to Run
-
-To run the API, follow these steps:
-
-1. Ensure that you have Java and Maven installed on your system.
-2. Clone the project repository.
-3. Open a terminal and navigate to the project's root directory.
-4. Run the command: `mvn spring-boot:run`.
-5. The API will start running# Note Controller API
-
-This API provides endpoints for managing notes.
+{
+"name": "Jerry Támara",
+"email": "jerry@gmail.com",
+"password": "Passw0rd@123",
+"phones": [
+{
+"number": "981383709",
+"citycode": "51",
+"contrycode": "57"
+}
+]
+}
 
 
-Aquí tienes los pasos para generar un JAR, construir un contenedor Docker y algunos ejemplos de comandos CURL para acceder a los endpoints:
+ ## Formato de respuesta exitosa (201 Created):
+{
+"id": "a0fe8dd1-aa70-4a89-86a8-1408bf9e97b7",
+"name": "Jerry Támara",
+"email": "jerry@gmail.com",
+"password": "$2a$10$gcJFvV1YkJ6FfvYM8SdlIu5bQCsydt.UDllpWAS1hJKrYaeOVF.AK",
+"phones": [
+{
+"number": "981383709",
+"cityCode": "51",
+"contryCode": "57"
+}
+],
+"created": "2024-09-25T16:37:25.3678296",
+"modified": "2024-09-25T16:37:25.3678296",
+"lastLogin": "2024-09-25T16:37:25.3678296",
+"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqZXJyeUBnbWFpbC5jb20iLCJqdGkiOiJiMzZmN2RhOS1mYTI3LTQwYjQtYmQ2Ni1lODAzMWEwOTA1MGUiLCJpYXQiOjE3MjczMDAyNDV9.VD-EexLjWAyZ8Keth9zDHtgwkclJ2vGx0PcVD3MzLIO3sEFskhKndnr1UqrM3sM3z-39xPpO-nA2fKqx9HS4MQ",
+"isActive": true
+}
 
-## Generar un JAR y construir un contenedor Docker
+ ## Errores posibles:
 
-1. Para generar un JAR, ejecuta el siguiente comando en la terminal:
+ - Correo ya registrado:
 
-   ```
-   mvn clean package
-   ```
+{
+"mensaje": "El correo ya registrado"
+}
 
-   Esto generará un archivo JAR en la carpeta `target` del proyecto.
+ ## Formato de correo inválido:
 
-2. Para construir la imagen del contenedor Docker, ejecuta el siguiente comando:
+{
+"mensaje": "El correo no tiene un formato válido"
+}
 
-   ```
-   docker build -t desafiotecnico-esp:1.0 .
-   ```
+ ## Contraseña no válida (no cumple con la expresión regular):
 
-   Este comando construirá una imagen del contenedor con el nombre `desafiotecnico-esp` y la etiqueta `1.0`. Asegúrate de incluir el punto `.` al final del comando para indicar que el archivo Dockerfile se encuentra en el directorio actual.
+{
+"mensaje": "La contraseña debe tener al menos 8 caracteres, incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial."
+}
 
-3. Para iniciar el contenedor, ejecuta el siguiente comando:
+ ## Obtener Usuario por ID
+ ## Descripción: Obtiene un usuario por su ID.
+- URL: /api/v1/users/{id}
+- Método HTTP: GET
+- Formato de respuesta exitosa (200 OK):
 
-   ```
-   docker run -p 8080:8080 desafiotecnico-esp:1.0
-   ```
+{
+"id": "a0fe8dd1-aa70-4a89-86a8-1408bf9e97b7",
+"name": "Jerry Támara",
+"email": "jerry@gmail.com",
+"password": "$2a$10$gcJFvV1YkJ6FfvYM8SdlIu5bQCsydt.UDllpWAS1hJKrYaeOVF.AK",
+"phones": [
+{
+"number": "981383709",
+"cityCode": "51",
+"contryCode": "57"
+}
+],
+"created": "2024-09-25T16:37:25.3678296",
+"modified": "2024-09-25T16:37:25.3678296",
+"lastLogin": "2024-09-25T16:37:25.3678296",
+"token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqZXJyeUBnbWFpbC5jb20iLCJqdGkiOiJiMzZmN2RhOS1mYTI3LTQwYjQtYmQ2Ni1lODAzMWEwOTA1MGUiLCJpYXQiOjE3MjczMDAyNDV9.VD-EexLjWAyZ8Keth9zDHtgwkclJ2vGx0PcVD3MzLIO3sEFskhKndnr1UqrM3sM3z-39xPpO-nA2fKqx9HS4MQ",
+"isActive": true
+}
 
-   Este comando iniciará el contenedor y mapeará el puerto `8080` del contenedor al puerto `8080` de tu máquina local. Puedes cambiar el número de puerto según tus necesidades.
+ ## Actualizar Usuario
+ - Descripción: Actualiza la información de un usuario existente por su ID.
 
-4. Para detener el contenedor, primero necesitas obtener el ID o el nombre del contenedor en ejecución. Ejecuta el siguiente comando para obtener una lista de todos los contenedores en ejecución:
+ - URL: /api/v1/users/{id}
+ - Método HTTP: PUT
+ - Formato de solicitud:
 
-   ```
-   docker ps
-   ```
-
-   Busca el ID o el nombre del contenedor que deseas detener.
-
-5. Una vez que hayas obtenido el ID o el nombre del contenedor, ejecuta el siguiente comando para detenerlo:
-
-   ```
-   docker stop <ID o nombre del contenedor>
-   ```
-
-   Reemplaza `<ID o nombre del contenedor>` con el ID o el nombre correspondiente.
-
-## Ejemplos de comandos CURL para endpoints
-
-Aquí tienes algunos ejemplos de comandos CURL para acceder a los endpoints de tu aplicación:
-
-1. Registrar un administrador:
-
-   ```
-   curl --location --request POST 'http://localhost:8080/api/auth/registerAdm' \--header 'Content-Type: application/json' \--header 'Cookie: JSESSIONID=1A45F4DA74396A6EF362BCAAEEFDD778' \--data-raw '{ "username": "Jerry", "password": "123"}'
-   ```
-
-2. Realizamos el Login con el usuario administrador creado anteriormente:
-
-   ```
-   curl --location --request POST 'http://localhost:8080/api/auth/login' \--header 'Content-Type: application/json' \--header 'Cookie: JSESSIONID=1A45F4DA74396A6EF362BCAAEEFDD778' \--data-raw '{ "username": "Jerry","password": "123"}'
-   ```
-
-   Reemplaza `{id}` con el ID del registro que deseas obtener.
+{
+"name": "Juan Rodriguez Updated",
+"email": "juan@gmail.com",
+"password": "UpdatedPassword1@",
+"phones": [
+{
+"number": "7654321",
+"citycode": "2",
+"contrycode": "57"
+}
+]
+}
 
 
-3. Consulta de información de PRICE:
+ ## Eliminar Usuario
+ - Descripción: Elimina un usuario por su ID.
+ - URL: /api/v1/users/{id}
+ - Método HTTP: DELETE
+ - Respuesta exitosa (204 No Content):
+ - No retorna contenido.
 
-   ```
-   curl --location --request GET 'http://localhost:8080/price?brandId=1&productId=35455&applicationDate=2020-06-14-15%3A00%3A00' \--header 'Content-Type: application/json' \--header 'Cookie: JSESSIONID=1A45F4DA74396A6EF362BCAAEEFDD778' \--header 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJKZXJyeSIsImlhdCI6MTcxMDM2MTAxNiwiZXhwIjoxNzEwMzYxMzE2fQ.VIscCH98YkUOvcavzTHf2dfsjQvrU4cLq7TziUDTIDSWkx_X7A4o9bJGNRYeC07jVJd8c2hLV-k_x0KPt34Szg' \--data '{ "title": "Prueba", "content": "Probando servicio"}'
-   ```
 
-   En esta solicitud, los parámetros incluidos son:
+## Pruebas
+- Puedes probar los endpoints usando Postman, cURL o cualquier cliente HTTP de tu preferencia. A continuación, un ejemplo usando cURL:
 
-- `brandId`: El ID de la marca que deseas consultar.
-- `productId`: El ID del producto que deseas consultar.
-- `applicationDate`: La fecha de aplicación para la consulta.
+ ## Registro de un usuario:
 
-Recuerda reemplazar `localhost:8080` con la dirección y el puerto correctos en caso de que tu aplicación se esté ejecutando en un entorno diferente.
-
-¡Asegúrate de tener Docker y Maven instalados y configurados correctamente antes de ejecutar estos comandos!
+curl -X POST http://localhost:8080/api/v1/users/register \
+-H "Content-Type: application/json" \
+-d '{
+"name": "Juan Rodriguez",
+"email": "juan@rodriguez.com",
+"password": "Hunter2@",
+"phones": [
+{
+"number": "1234567",
+"citycode": "1",
+"contrycode": "57"
+}
+]
+}'

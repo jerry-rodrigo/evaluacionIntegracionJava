@@ -37,6 +37,9 @@ public class UserServiceImpl implements UserService {
     @Value("${user.password.regex}")
     private String passwordRegex;
 
+    @Value("${user.email.regex}")
+    private String emailRegex;
+
     private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     /**
@@ -59,11 +62,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User registerUser(UserRequestDto userRequestDto) {
-        Optional<User> existingUser = userRepository.findByEmail(userRequestDto.getEmail());
-        if (existingUser.isPresent()) {
-            throw new EmailValidationException("El correo ya registrado");
-        }
 
+        validateEmail(userRequestDto.getEmail());
         validatePassword(userRequestDto.getPassword());
 
         User user = new User();
@@ -85,14 +85,9 @@ public class UserServiceImpl implements UserService {
         user.setCreated(LocalDateTime.now());
         user.setModified(LocalDateTime.now());
         user.setLastLogin(LocalDateTime.now());
-        user.setActive(true);
+        user.setIsActive(true);
 
-        String token = Jwts.builder()
-                .setSubject(user.getEmail())
-                .setId(UUID.randomUUID().toString())
-                .setIssuedAt(new Date())
-                .signWith(secretKey)
-                .compact();
+        String token = generateToken(user.getEmail());
         user.setToken(token);
 
         return userRepository.save(user);
@@ -110,6 +105,37 @@ public class UserServiceImpl implements UserService {
                     "incluir al menos una letra mayúscula, una letra minúscula, " +
                     "un número y un carácter especial.");
         }
+    }
+
+    /**
+     * Valida si el correo tiene un formato válido.
+     *
+     * @param email El correo a validar.
+     * @throws EmailValidationException Si el formato del correo no es válido.
+     */
+    private void validateEmail(String email) {
+        if (!Pattern.matches(emailRegex, email)) {
+            throw new EmailValidationException("El correo no tiene un formato válido.");
+        }
+        Optional<User> existingUser = userRepository.findByEmail(email);
+        if (existingUser.isPresent()) {
+            throw new EmailValidationException("El correo ya registrado");
+        }
+    }
+
+    /**
+     * Genera un token JWT para el usuario.
+     *
+     * @param email El correo del usuario.
+     * @return El token JWT generado.
+     */
+    private String generateToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setId(UUID.randomUUID().toString())
+                .setIssuedAt(new Date())
+                .signWith(secretKey)
+                .compact();
     }
 
     /**
@@ -153,10 +179,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (!userRequestDto.getEmail().equals(user.getEmail())) {
-            Optional<User> existingUser = userRepository.findByEmail(userRequestDto.getEmail());
-            if (existingUser.isPresent()) {
-                throw new EmailValidationException("El correo ya registrado");
-            }
+            validateEmail(userRequestDto.getEmail());
             user.setEmail(userRequestDto.getEmail());
         }
 
@@ -167,7 +190,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userRequestDto.getActive() != null) {
-            user.setActive(userRequestDto.getActive());
+            user.setIsActive(userRequestDto.getActive());
         }
 
         user.setCreated(user.getCreated());
