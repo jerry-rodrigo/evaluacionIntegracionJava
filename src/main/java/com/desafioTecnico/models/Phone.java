@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 /**
  * Representa un número de teléfono asociado a un usuario.

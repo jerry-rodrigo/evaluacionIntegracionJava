@@ -14,16 +14,18 @@ import java.util.Map;
 
 /**
  * Manejador global de excepciones para la aplicación.
- * Captura y maneja excepciones específicas, proporcionando respuestas adecuadas.
+ * Captura y maneja excepciones específicas relacionadas con la validación de datos de usuario
+ * y otras excepciones de validación general, proporcionando respuestas HTTP adecuadas.
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * Maneja excepciones de validación de argumentos de método.
+     * Maneja las excepciones de validación de argumentos de método, típicamente lanzadas
+     * cuando se violan las restricciones de validación de anotaciones en los DTO.
      *
      * @param ex la excepción de validación que se lanzó
-     * @return un ResponseEntity que contiene un mapa de errores de validación y un estado HTTP 400
+     * @return un ResponseEntity que contiene un mapa con los errores de validación de campos y un estado HTTP 400 (BAD REQUEST)
      */
     @Operation(summary = "Manejo de errores de validación")
     @ApiResponses(value = {
@@ -32,16 +34,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage()));
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+                String fieldName = error.getField();
+                String errorMessage = error.getDefaultMessage();
+                errors.put(fieldName, errorMessage);
+
+        });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     /**
-     * Maneja excepciones relacionadas con la validación de contraseñas.
+     * Maneja las excepciones relacionadas con la validación de contraseñas.
+     * Esto ocurre cuando la contraseña no cumple con los requisitos establecidos, como longitud o complejidad.
      *
-     * @param ex la excepción de validación de contraseña que se lanzó
-     * @return un ResponseEntity que contiene el mensaje de error y un estado HTTP 400
+     * @param ex la excepción de validación de contraseña lanzada
+     * @return un ResponseEntity que contiene el mensaje de error y un estado HTTP 400 (BAD REQUEST)
      */
     @Operation(summary = "Manejo de errores de validación de contraseña")
     @ApiResponses(value = {
@@ -55,14 +62,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Maneja excepciones relacionadas con la validación de correos electrónicos.
+     * Maneja las excepciones relacionadas con la validación de correos electrónicos.
+     * Esto ocurre cuando el formato del correo es inválido o el correo ya está registrado.
      *
-     * @param ex la excepción de validación de correo electrónico que se lanzó
-     * @return un ResponseEntity que contiene el mensaje de error y un estado HTTP 400
+     * @param ex la excepción de validación de correo electrónico lanzada
+     * @return un ResponseEntity que contiene el mensaje de error y un estado HTTP 400 (BAD REQUEST)
      */
     @Operation(summary = "Manejo de errores de validación de correo electrónico")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "El correo electrónico ya está registrado")
+            @ApiResponse(responseCode = "400", description = "El correo electrónico ya está registrado o es inválido")
     })
     @ExceptionHandler(EmailValidationException.class)
     public ResponseEntity<String> handleEmailValidationException(EmailValidationException ex) {
@@ -72,19 +80,20 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Maneja excepciones relacionadas con la validación de usuarios existentes.
+     * Maneja las excepciones relacionadas con la validación de usuarios no encontrados.
+     * Esto ocurre cuando se intenta buscar un usuario que no existe en la base de datos.
      *
-     * @param ex la excepción de validación de usuarios existentes que se lanzó
-     * @return un ResponseEntity que contiene el mensaje de error y un estado HTTP 400
+     * @param ex la excepción de usuario no encontrado lanzada
+     * @return un ResponseEntity que contiene el mensaje de error y un estado HTTP 404 (NOT FOUND)
      */
-    @Operation(summary = "Manejo de errores de validación de usuario")
+    @Operation(summary = "Manejo de errores de validación de usuario no encontrado")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "El usuario no existe")
+            @ApiResponse(responseCode = "404", description = "El usuario no existe")
     })
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
 }

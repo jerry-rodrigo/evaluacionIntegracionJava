@@ -189,3 +189,33 @@ curl -X POST http://localhost:8080/api/v1/users/register \
 }
 ]
 }'
+
+## DIAGRAMA
+![img.png](img.png)
+
+![img_1.png](img_1.png)
+
+## Descripción de Componentes
+## API RESTful (Spring Boot):
+Utilizamos Spring Boot para crear la API que manejará las solicitudes HTTP.
+
+## Controladores:
+UserController: Este controlador expone los endpoints de la API, como el registro de usuarios. Se encarga de recibir las solicitudes y devolver respuestas adecuadas.
+
+## Servicios:
+UserService: Contiene la lógica de negocio para la gestión de usuarios. Se encarga de la validación de datos, la creación de usuarios y la generación de tokens.
+
+## Repositorios:
+UserRepository: Interfaz que extiende JpaRepository para interactuar con la base de datos y realizar operaciones CRUD en la entidad User.
+
+## Base de Datos:
+H2 Database: Base de datos en memoria que se utiliza para almacenar los datos de los usuarios durante el desarrollo y las pruebas.
+
+## Validación y Configuración:
+Se implementan expresiones regulares para validar el formato del correo y la contraseña. Estos valores pueden ser configurables a través de archivos de propiedades.
+
+## Seguridad JWT:
+Se utiliza JWT (JSON Web Tokens) para la generación de tokens de acceso que autentican a los usuarios en la API.
+
+## Manejo de Errores:
+Todos los errores se manejan de manera centralizada y se devuelven en el formato JSON especificado:

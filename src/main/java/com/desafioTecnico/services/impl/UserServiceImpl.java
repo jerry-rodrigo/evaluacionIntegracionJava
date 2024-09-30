@@ -73,6 +73,10 @@ public class UserServiceImpl implements UserService {
         String hashedPassword = BCrypt.hashpw(userRequestDto.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
 
+        if (userRequestDto.getPhones() == null || userRequestDto.getPhones().isEmpty()) {
+            throw new IllegalArgumentException("Debe proporcionar al menos un número de teléfono");
+        }
+
         List<Phone> phones = userRequestDto.getPhones().stream()
                 .map(phoneDto -> {
                     Phone phone = new Phone();

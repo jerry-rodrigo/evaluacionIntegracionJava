@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -30,6 +30,7 @@ public class UserRequestDto {
     private Boolean active;
 
     @Valid
+    @NotEmpty(message = "Debe proporcionar al menos un número de teléfono")
     private List<PhoneDto> phones;
 
 }
