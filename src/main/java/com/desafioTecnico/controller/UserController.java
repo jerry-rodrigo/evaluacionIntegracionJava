@@ -17,7 +17,7 @@ import java.util.UUID;
  * Proporciona endpoints para registrar nuevos usuarios y realizar otras operaciones relacionadas.
  */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @Validated
 public class UserController {
 

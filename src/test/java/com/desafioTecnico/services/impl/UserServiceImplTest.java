@@ -1,15 +1,22 @@
 package com.desafioTecnico.services.impl;
 
+import com.desafioTecnico.dtos.PhoneDto;
 import com.desafioTecnico.dtos.UserRequestDto;
 import com.desafioTecnico.exceptions.EmailValidationException;
 import com.desafioTecnico.models.User;
 import com.desafioTecnico.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,23 +24,26 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class UserServiceImplTest {
 
+    @MockBean
     private UserRepository userRepository;
+
+    @Autowired
     private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
-        userRepository = mock(UserRepository.class);
-        userService = new UserServiceImpl(userRepository);
-
-        ReflectionTestUtils.setField(userService, "passwordRegex", "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=]).{8,}$");
+        ReflectionTestUtils.setField(userService, "passwordRegex", "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@#$%^&+=]).{8,20}$");
     }
 
     @Test
     void registerUser_ShouldRegisterUser_WhenEmailIsUnique() {
+        List<PhoneDto> phones = new ArrayList<>();
+        phones.add(new PhoneDto("123456789", "1", "123"));
 
-        UserRequestDto userRequestDto = new UserRequestDto("Jerry Támara", "jerry@gmail.com", "P@ssw0rd123", true, new ArrayList<>());
+        UserRequestDto userRequestDto = new UserRequestDto("Jerry Támara", "jerry@gmail.com", "P@ssw0rd123", true, phones);
         User userToSave = new User();
         userToSave.setName(userRequestDto.getName());
         userToSave.setEmail(userRequestDto.getEmail());
